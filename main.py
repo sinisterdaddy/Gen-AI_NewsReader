@@ -8,7 +8,7 @@ import time
 from genvideo import genvideo
 from downloadvideo import download_video
 
-llm = ChatOpenAI(model="gpt-4", temperature=0.0)
+llm = ChatOpenAI(model="gpt-4", temperature=0.0, openai_api_key="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")
 
 ts = """
 you are a news anchor for a global news channel, with this context generate a concise summary of the following
@@ -32,7 +32,7 @@ if st.button("Submit", type="primary"):
         chain = load_summarize_chain(llm, chain_type="stuff", prompt=pt)
         summary = chain.run(docs)
         
-        id = genvideo("https://clips-presenters.d-id.com/lana/uXbrIxQFjr/kzlKYBZ2wc/image.png", summary, "en-US-SaraNeural")
+        id = genvideo("https://clips-presenters.d-id.com/amy/Aq6OmGZnMt/Vcq0R4a8F0/image.png", summary, "en-US-SaraNeural")
         time.sleep(100)
         url = download_video(id)
         
