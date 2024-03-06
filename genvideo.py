@@ -1,21 +1,19 @@
 import requests
 
-API_KEY="ZGVqb2RlbTQ2MUBodWl6ay5jb20:aYbSvK-Hpb5S8D4ycgvNj"
-
+API_KEY = "amlyaWxheDU3NkBlYnV0aG9yLmNvbQ:HRTF85Tr1zKSyxhrNomzx"
 url = "https://api.d-id.com/talks"
 
-def genvideo(img_url,summary,v_id):
-
+def genvideo(img_url, summary, v_id):
     payload = {
-        "source_url":img_url,
+        "source_url": img_url,
         "script": {
             "type": "text",
             "input": summary,
             "provider": {
                 "type": "microsoft",
                 "voice_id": v_id,
-                "voice_config":{
-                    "style":"Default"
+                "voice_config": {
+                    "style": "Default"
                 }
             }
         }
@@ -26,8 +24,19 @@ def genvideo(img_url,summary,v_id):
         "authorization": f"Basic {API_KEY}"
     }
 
-    response = requests.post(url, json=payload, headers=headers)
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        id = response.json().get("id")
+        if id is not None:
+            print("Video ID:", id)
+            return id
+        else:
+            print("Failed to get video ID from response JSON:", response.json())
+            return None
+    except requests.RequestException as e:
+        print("Error occurred during request:", e)
+        return None
 
-    id=response.json()["id"]
-    print(id)
-    return id
+# Example usage:
+# genvideo("https://clips-presenters.d-id.com/amy/Aq6OmGZnMt/Vcq0R4a8F0/image.png", "News summary", "en-US-SaraNeural")

@@ -1,17 +1,28 @@
 import requests
 
-API_KEY="ZGVqb2RlbTQ2MUBodWl6ay5jb20:aYbSvK-Hpb5S8D4ycgvNj"
+import aiohttp
 
-def download_video(id):
-    url = "https://api.d-id.com/talks/"+id
+API_KEY = "amlyaWxheDU3NkBlYnV0aG9yLmNvbQ:HRTF85Tr1zKSyxhrNomzx"
+
+async def download_video(id):
+    url = f"https://api.d-id.com/talks/{id}"
 
     headers = {
         "accept": "application/json",
         "authorization": f"Basic {API_KEY}"
     }
 
-    response = requests.get(url, headers=headers)
-    print(response.json())
-    url=response.json()["result_url"]
-    
-    return url
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers) as response:
+                response_json = await response.json()
+                if "result_url" in response_json:
+                    url = response_json["result_url"]
+                    print(url)
+                    return url
+                else:
+                    print("Error: 'result_url' not found in API response")
+                    return None
+    except aiohttp.ClientError as e:
+        print("Error occurred during request:", e)
+        return None

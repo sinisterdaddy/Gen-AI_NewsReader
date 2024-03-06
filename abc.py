@@ -6,10 +6,9 @@ from downloadvideo import download_video
 import time
 import datetime
 import functools
-import asyncio
-
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 my_latitude = 16.445370
 my_longitude = 80.544980
@@ -64,44 +63,44 @@ def get_stock(stock_name):
     # Debug statement: Print out the stock API response
     print("Stock API Response:", stock_response.json())
 
-    # stock_data = stock_response.json()
+    stock_data = stock_response.json()
 
-    # stock_data_details = stock_data['Time Series (Daily)']
-    # stock_timestamp = list(stock_data_details.keys())[:2]
-    # stock_close_price_today = round(float(stock_data_details[stock_timestamp[0]]['4. close']) * 83.15, 2)
-    # stock_close_price_yesterday = round(float(stock_data_details[stock_timestamp[1]]['4. close']) * 83.15, 2)
+    stock_data_details = stock_data['Time Series (Daily)']
+    stock_timestamp = list(stock_data_details.keys())[:2]
+    stock_close_price_today = round(float(stock_data_details[stock_timestamp[0]]['4. close']) * 83.15, 2)
+    stock_close_price_yesterday = round(float(stock_data_details[stock_timestamp[1]]['4. close']) * 83.15, 2)
 
-    # stock_price_change = round(float(((stock_close_price_today - stock_close_price_yesterday)
-    #                                   / stock_close_price_yesterday) * 100), 2)
-    # difference = round(float(stock_close_price_today - stock_close_price_yesterday), 2)
-    # if difference > 0:
-    #     col = "#008561"
-    #     arrow = "%▲"
-    # elif difference < 0:
-    #     col = "#c1433d"
-    #     arrow = "%▼"
-    # else:
-    #     col = "black"
-    #     arrow = ""
+    stock_price_change = round(float(((stock_close_price_today - stock_close_price_yesterday)
+                                      / stock_close_price_yesterday) * 100), 2)
+    difference = round(float(stock_close_price_today - stock_close_price_yesterday), 2)
+    if difference > 0:
+        col = "#008561"
+        arrow = "%▲"
+    elif difference < 0:
+        col = "#c1433d"
+        arrow = "%▼"
+    else:
+        col = "black"
+        arrow = ""
 
-    # # Debug statement: Print out the processed stock data
-    # print("Processed Stock Data:", {
-    #     "name": stock_name,
-    #     "price": stock_close_price_today,
-    #     "percentage": stock_price_change,
-    #     "change": difference,
-    #     "col": col,
-    #     "arrow": arrow,
-    # })
+    # Debug statement: Print out the processed stock data
+    print("Processed Stock Data:", {
+        "name": stock_name,
+        "price": stock_close_price_today,
+        "percentage": stock_price_change,
+        "change": difference,
+        "col": col,
+        "arrow": arrow,
+    })
 
-    # return {
-    #     "name": stock_name,
-    #     "price": stock_close_price_today,
-    #     "percentage": stock_price_change,
-    #     "change": difference,
-    #     "col": col,
-    #     "arrow": arrow,
-    # }
+    return {
+        "name": stock_name,
+        "price": stock_close_price_today,
+        "percentage": stock_price_change,
+        "change": difference,
+        "col": col,
+        "arrow": arrow,
+    }
 
 
 @functools.lru_cache(maxsize=1)  # Cache the result for get_top_news
@@ -188,13 +187,11 @@ def get_keyword_news(num, keyword):
 
     return news_list
 
-
-async def generate_news_and_video(sport):
+def generate_news_and_video(sport):
     news_text = f"Latest news related to {sport}."
     id = genvideo("https://clips-presenters.d-id.com/amy/Aq6OmGZnMt/Vcq0R4a8F0/image.png", news_text, "en-US-SaraNeural")
-    time.sleep(100)  # You may want to replace this with an asynchronous delay
-    video_url = await download_video(id)
-    print(video_url)
+    time.sleep(100)
+    video_url = download_video(id)
     return video_url
 
 @app.route("/")
@@ -224,7 +221,7 @@ def home():
                            news_items=news_items, title=title, currently=currently)
 
 @app.route("/sports")
-async def sports():
+def sports():
     title = "Sports briefing"
     currently = "sports_label"
     date_data = get_date()
@@ -246,13 +243,11 @@ async def sports():
     news_items = get_top_news(20, country='in', category='sports')
 
     # Generate video for sports news
-    video_url = await generate_news_and_video("Sports")
+    video_url = generate_news_and_video("Sports")
 
     return render_template("index.html", weather_data=weather_data, date_data=date_data, weather_icon=weather_icon,
                            stock_data=stock_data, stock_data1=stock_data1, stock_data2=stock_data2,
                            news_items=news_items, title=title, currently=currently, video_url=video_url)
-
-
 
 @app.route("/entertainment")
 def entertainment():
