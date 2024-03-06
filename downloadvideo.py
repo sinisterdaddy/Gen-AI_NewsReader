@@ -2,7 +2,7 @@ import requests
 
 import aiohttp
 
-API_KEY = "amlyaWxheDU3NkBlYnV0aG9yLmNvbQ:HRTF85Tr1zKSyxhrNomzx"
+API_KEY = "c2lwb3dlZjU4N0BiaXphdG9wLmNvbQ:58O7fARsf8TQAK_KyuWOr"
 
 async def download_video(id):
     url = f"https://api.d-id.com/talks/{id}"

@@ -1,6 +1,6 @@
 import requests
 
-API_KEY = "amlyaWxheDU3NkBlYnV0aG9yLmNvbQ:HRTF85Tr1zKSyxhrNomzx"
+API_KEY = "c2lwb3dlZjU4N0BiaXphdG9wLmNvbQ:58O7fARsf8TQAK_KyuWOr"
 url = "https://api.d-id.com/talks"
 
 def genvideo(img_url, summary, v_id):
