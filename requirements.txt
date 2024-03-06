@@ -2,3 +2,4 @@ flask
 Gunicorn
 requests
 Flask-Cors
+aiohttp
