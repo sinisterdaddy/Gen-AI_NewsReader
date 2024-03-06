@@ -1,4 +1,4 @@
-flask
+flask[async]
 Gunicorn
 requests
 Flask-Cors
